@@ -20,7 +20,7 @@ V1.1.0
 Enhancements:
 - Add support for NowCast calculation.
 
-V1.2.0
+V2.0.0
 Breaking change in behavior:
 - The ability to configure if the aqi-xtype is added to the beginning or end of the xtype list.
   The default is the beginning of the list.
@@ -28,6 +28,24 @@ Breaking change in behavior:
 
 Fixes:
 - Handle values of 'None' when calculating the NowCast AQI (#7).
+- Fix and improve performance of nowcast algorithm by retrieving data directly from the database.
 
 Enhancements:
+- Support EPA’s 2024 update to calculating AQI.
+- Supports calculating series and aggregation for the EPA AQI algorithm.
+- Catch more general exceptions.
+  Because it can be hard to recreate errors, this is an attempt to log more information when an error happens in a production environement.
 - Log (debug) values used to calculate NowCast AQI.
+- Configure log level for the different aqi ‘types’.
+- More logging….
+
+Limitations:
+- Calculating nowcast series data is not supported.
+- Calculating nowcast aggregation (min, max, etc.) is not supported.
+
+Internal:
+- Code cleanup (ongoing).
+- Better support for WeeWX v5.
+- Add development tools such as running linting, tests, code coverage, etc.
+- More tests
+- Initial support of Github actions.
