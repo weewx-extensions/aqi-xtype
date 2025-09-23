@@ -21,7 +21,7 @@ from weewx.engine import StdService
 from weewx.units import ValueTuple
 from weeutil.weeutil import to_bool, to_int
 
-VERSION = '2.0.0'
+VERSION = '2.1.0-rc01'
 
 class CalculationError(Exception):
     ''' Error calculating AQI '''
