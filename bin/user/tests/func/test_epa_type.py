@@ -24,7 +24,7 @@ import utils.database
 # pylint: enable=import-error, wrong-import-position
 
 def random_string(length=32):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)]) # pylint: disable=unused-variable
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])  # pylint: disable=unused-variable
 
 def setup_config(calculated_field, input_field, algorithm, aqi_type):
     config_dict = {
@@ -119,7 +119,7 @@ class TestEPAGetSeries(unittest.TestCase):
             5, 5, 10, 7, 5, 7, 10, 8, 6, 6, 8, 9, 9, 5, 9, 12, 7, 8, 9, 10, 7, 10, 8, 6,
             8, 7, 7, 7, 6, 6, 7, 7, 6, 8, 8, 7, 5, 6, 7, 9, 8, 8, 7, 8, 7, 5, 6, 5,
             8, 11, 8, 8, 11, 7, 9, 7, 6, 7, 6, 7, 6, 8, 8, 7, 10, 7, 10, 10, 9, 7, 5, 6,
-            13, 6, 9, 9, 6, 11, 10, 8, 6, 10, 9, 8, 10, 8,6, 6, 7, 9, 6, 10, 5, 9, 6, 7,
+            13, 6, 9, 9, 6, 11, 10, 8, 6, 10, 9, 8, 10, 8, 6, 6, 7, 9, 6, 10, 5, 9, 6, 7,
             10, 9, 10, 9, 6, 6, 8, 8, 8, 12, 8, 8, 8, 11, 10, 7, 5, 8, 10, 8, 5, 7, 8, 7,
             8, 9, 8, 10, 12, 10, 7, 12, 9, 9, 8, 12, 9, 8, 8, 6, 9, 9, 6, 8, 7, 8, 13, 10,
             14, 11, 6, 8, 8, 4, 5, 10, 7, 8, 6, 8, 10, 10, 6, 7, 5, 6, 6, 12, 7, 7, 7, 9,
@@ -130,10 +130,10 @@ class TestEPAGetSeries(unittest.TestCase):
         ]
 
         self.assertEqual(start_vec_t,
-                        ([utils.data.db_20250221_timestamps[0] - utils.database.ARCHIVE_INTERVAL_SECONDS] +
+                         ([utils.data.db_20250221_timestamps[0] - utils.database.ARCHIVE_INTERVAL_SECONDS] +
                           utils.data.db_20250221_timestamps[0:-1],
-                        'unix_epoch',
-                        'group_time'))
+                          'unix_epoch',
+                          'group_time'))
         self.assertEqual(stop_vec_t, (utils.data.db_20250221_timestamps, 'unix_epoch', 'group_time'))
 
         self.assertEqual(data_vec_t, (expected_aqi, None, None))
@@ -151,10 +151,10 @@ class TestEPAGetSeries(unittest.TestCase):
         SUT = user.aqitype.AQIType(self.mock_logger, user.aqitype.SQLExecutor(self.mock_logger), config)
 
         value_tuple  = SUT.get_series(calculated_field,
-                                    utils.database.timespan,
-                                    TestEPAGetSeries.db_manager,
-                                    'min',
-                                    3600)
+                                      utils.database.timespan,
+                                      TestEPAGetSeries.db_manager,
+                                      'min',
+                                      3600)
 
         expected_aqi = ([5, 4, 5, 5, 6, 5, 6, 5, 6, 5, 6, 5, 7, 6, 4, 5, 5, 4, 5, 4, 5, 5, 5, 7], None, None)
 
@@ -201,8 +201,8 @@ class TestEPAGetAggregate(unittest.TestCase):
         self.assertEqual(value_tuple[2], None)
 
 if __name__ == '__main__':
-    #test_suite = unittest.TestSuite()
-    #test_suite.addTest(TestNowCastDevelopment('test_get_series_prototype02'))
-    #unittest.TextTestRunner().run(test_suite)
+    # test_suite = unittest.TestSuite()
+    # test_suite.addTest(TestNowCastDevelopment('test_get_series_prototype02'))
+    # unittest.TextTestRunner().run(test_suite)
 
     unittest.main(exit=False)

@@ -22,7 +22,7 @@ import weeutil.weeutil
 
 import user.aqitype
 
-#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 # pylint: disable=import-error, wrong-import-position
@@ -42,7 +42,7 @@ def calculate_interval_average(full_data, interval_size):
     return averages
 
 def random_string(length=32):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)]) # pylint: disable=unused-variable
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])  # pylint: disable=unused-variable
 
 def mock_calculate_effect(*_args):
     return random.randint(1, 100)
@@ -93,7 +93,7 @@ class TestSQL(unittest.TestCase):
 
         stop = min(weeutil.weeutil.startOfInterval(time.time(), 3600), utils.database.timespan.stop)
 
-        records_iter = SUT.get_concentration_data_nowcast(self.db_manager, TestSQL.input_field, stop , utils.database.timespan.start - 43200)
+        records_iter = SUT.get_concentration_data_nowcast(self.db_manager, TestSQL.input_field, stop, utils.database.timespan.start - 43200)
         records = list(records_iter)
         timestamps, concentrations, _start_time = zip(*records)
 
@@ -101,20 +101,20 @@ class TestSQL(unittest.TestCase):
         # Get every 12th timestamp. These are the hour timestamps
         # Only want the last 12 hours of the previous day, 20250220
         self.assertEqual(list(timestamps),
-                         list(reversed(data.db_20250221_timestamps[11:len(data.db_20250221_timestamps)-12:12])) + \
+                         list(reversed(data.db_20250221_timestamps[11:len(data.db_20250221_timestamps)-12:12])) +
                          list(reversed((data.db_20250220_timestamps[143::12]))))
         # Compute the hourly average of the pm2_5 data
         # Only want the last 12 hours of the previous day, 20250220
         expected_concentrations = list(reversed(calculate_interval_average(data.db_20250221_pm2_5_values, 12))) + \
-                                  list(reversed(calculate_interval_average(data.db_20250220_pm2_5_values[144:], 12)))
+            list(reversed(calculate_interval_average(data.db_20250220_pm2_5_values[144:], 12)))
         concentrations_list = list(concentrations)
-        for i in range(len(concentrations_list)):
-            self.assertAlmostEqual(concentrations_list[i], expected_concentrations[i])
+        for index, concentration in enumerate(concentrations_list):
+            self.assertAlmostEqual(concentration, expected_concentrations[index])
 
     def test_get_concentration_data(self):
         SUT = user.aqitype.SQLExecutor(self.mock_logger)
 
-        #timespan = (1740114000, 1740200400)
+        # timespan = (1740114000, 1740200400)
         records_iter = SUT.get_concentration_data(TestSQL.input_field, utils.database.timespan, TestSQL.db_manager)
 
         i = 0
@@ -130,9 +130,9 @@ class TestSQL(unittest.TestCase):
         SUT = user.aqitype.SQLExecutor(self.mock_logger)
 
         query_type, records_iter = SUT.get_aggregate_concentation_data(TestSQL.input_field,
-                                                                        utils.database.timespan,
-                                                                        'avg',
-                                                                        TestSQL.db_manager)
+                                                                       utils.database.timespan,
+                                                                       'avg',
+                                                                       TestSQL.db_manager)
 
         self.assertEqual(query_type, 'aggregate')
         i = 0
@@ -144,9 +144,9 @@ class TestSQL(unittest.TestCase):
         SUT = user.aqitype.SQLExecutor(self.mock_logger)
 
         query_type, records_iter = SUT.get_aggregate_concentation_data(TestSQL.input_field,
-                                                                        utils.database.timespan,
-                                                                        'min',
-                                                                        TestSQL.db_manager)
+                                                                       utils.database.timespan,
+                                                                       'min',
+                                                                       TestSQL.db_manager)
 
         self.assertEqual(query_type, 'basic')
         concentration = list(records_iter)[0][0]
@@ -156,17 +156,17 @@ class TestSQL(unittest.TestCase):
         SUT = user.aqitype.SQLExecutor(self.mock_logger)
 
         query_type, records_iter = SUT.get_aggregate_concentation_data(TestSQL.input_field,
-                                                                        utils.database.timespan,
-                                                                        'max',
-                                                                        TestSQL.db_manager)
+                                                                       utils.database.timespan,
+                                                                       'max',
+                                                                       TestSQL.db_manager)
 
         self.assertEqual(query_type, 'basic')
         concentration = list(records_iter)[0][0]
         self.assertEqual(concentration, max(data.db_20250221_pm2_5_values))
 
 if __name__ == '__main__':
-    #test_suite = unittest.TestSuite()
-    #test_suite.addTest(TestSQL('test_get_concentration_data_nowcast'))
-    #unittest.TextTestRunner().run(test_suite)
+    # test_suite = unittest.TestSuite()
+    # test_suite.addTest(TestSQL('test_get_concentration_data_nowcast'))
+    # unittest.TextTestRunner().run(test_suite)
 
     unittest.main(exit=False)

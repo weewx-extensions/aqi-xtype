@@ -20,7 +20,6 @@ class TestAQISearchList(unittest.TestCase):
         self.assertEqual(searchlist.get_aqi_color(450.0, 'EPAAQI'), '7e0023')
         self.assertEqual(searchlist.get_aqi_color(6050.0, 'EPAAQI'), '7e0023')
 
-
     def test_get_aqi_description_epa(self):
         searchlist = user.aqitype.AQISearchList({})
         self.assertEqual(searchlist.get_aqi_description(0.0, 'EPAAQI'), 'aqi_EPAAQI_description1')

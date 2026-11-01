@@ -87,7 +87,7 @@ class AQITypeManager(StdService):
 
 class SQLExecutor():
     ''' Class to execute SQL statements.
-        This is a very thin layer. 
+        This is a very thin layer.
         Its primary purpose is to make testing easier. '''
 
     # If there are no records in the grouping, no record will be returned for that group.
@@ -96,7 +96,7 @@ class SQLExecutor():
     SELECT
         MAX(dateTime) - 3600 as startTimestamp,
         avg({input}) as avgConcentration,
-        /* The following is not used in the code, but is convenient when debugging */ 
+        /* The following is not used in the code, but is convenient when debugging */
         datetime(MAX(dateTime) - 3600, 'unixepoch', 'localtime') as startDateTime
     FROM archive
     WHERE dateTime > {start}
@@ -111,63 +111,63 @@ class SQLExecutor():
     '''
 
     sql_concentration_str = '''
-    SELECT 
-        dateTime, 
-        usUnits, 
-        `interval`, 
-        {input} 
-    FROM 
-        {table_name} 
+    SELECT
+        dateTime,
+        usUnits,
+        `interval`,
+        {input}
+    FROM
+        {table_name}
     WHERE dateTime > ? AND dateTime <= ?
     '''
 
     simple_sql_stmts = {
-    'count': "SELECT COUNT(dateTime) FROM {table_name} "
-                "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL",
-    'firsttime': "SELECT MIN(dateTime) FROM {table_name} "
-            "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
-            "ORDER BY dateTime ASC LIMIT 1;",
-    'lasttime': "SELECT MAX(dateTime) FROM {table_name} "
-            "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
-            "ORDER BY dateTime DESC LIMIT 1;",                 
-    'maxtime': "SELECT dateTime FROM {table_name} "
-                "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
-                "ORDER BY {input} DESC LIMIT 1", 
-    'mintime': "SELECT dateTime FROM {table_name} "
-                "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
-                "ORDER BY {input} ASC LIMIT 1",
-    'not_null': "SELECT 1 FROM {table_name} "
-                "WHERE dateTime > {start} AND dateTime <= {stop} "
-                "AND {input} IS NOT NULL LIMIT 1",                   
+        'count': "SELECT COUNT(dateTime) FROM {table_name} "
+                 "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL",
+        'firsttime': "SELECT MIN(dateTime) FROM {table_name} "
+                     "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
+                     "ORDER BY dateTime ASC LIMIT 1;",
+        'lasttime': "SELECT MAX(dateTime) FROM {table_name} "
+                    "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
+                    "ORDER BY dateTime DESC LIMIT 1;",
+        'maxtime': "SELECT dateTime FROM {table_name} "
+                   "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
+                   "ORDER BY {input} DESC LIMIT 1",
+        'mintime': "SELECT dateTime FROM {table_name} "
+                   "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
+                   "ORDER BY {input} ASC LIMIT 1",
+        'not_null': "SELECT 1 FROM {table_name} "
+                    "WHERE dateTime > {start} AND dateTime <= {stop} "
+                    "AND {input} IS NOT NULL LIMIT 1",
     }
 
     aggregate_sql_stmts = {
-    'avg': "SELECT {input} FROM {table_name} "
-            "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL",
-    'sum': "SELECT {input} FROM {table_name} "
-            "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL",
+        'avg': "SELECT {input} FROM {table_name} "
+               "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL",
+        'sum': "SELECT {input} FROM {table_name} "
+               "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL",
     }
 
     basic_sql_stmts = {
-    'first': "SELECT {input} FROM {table_name} "
-            "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
-            "ORDER BY dateTime ASC LIMIT 1;",
-    'last': "SELECT {input} FROM {table_name} "
-            "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
-            "ORDER BY dateTime DESC LIMIT 1;",
-    'min': "SELECT {input} FROM {table_name} "
-            "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
-            "ORDER BY {input} ASC LIMIT 1;",
-    'max': "SELECT {input} FROM {table_name} "
-            "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
-            "ORDER BY {input} DESC LIMIT 1;",
+        'first': "SELECT {input} FROM {table_name} "
+                 "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
+                 "ORDER BY dateTime ASC LIMIT 1;",
+        'last': "SELECT {input} FROM {table_name} "
+                "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
+                "ORDER BY dateTime DESC LIMIT 1;",
+        'min': "SELECT {input} FROM {table_name} "
+               "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
+               "ORDER BY {input} ASC LIMIT 1;",
+        'max': "SELECT {input} FROM {table_name} "
+               "WHERE dateTime > {start} AND dateTime <= {stop} AND {input} IS NOT NULL "
+               "ORDER BY {input} DESC LIMIT 1;",
     }
 
     def __init__(self, logger):
         self.logger = logger
 
     def get_concentration_data_nowcast(self, db_manager, dependent_field, stop, start):
-        ''' Get the necessary concentration data to compute for a given time. 
+        ''' Get the necessary concentration data to compute for a given time.
             The data returned may contain None values for the concentration.
             It also may have missing records (gaps)'''
 
@@ -236,7 +236,8 @@ class SQLExecutor():
 
         return query_type, records_iter
 
-class AbstractCalculator():
+    # The calculators are asked for one thing, a calculation.
+class AbstractCalculator():  # pylint: disable=too-few-public-methods
     """
     Abstract Calculator class.
     """
@@ -256,25 +257,25 @@ class NowCast(AbstractCalculator):
     https://mazamascience.github.io/AirMonitor/articles/NowCast.html
     http://cran.nexr.com/web/packages/PWFSLSmoke/vignettes/NowCast.html
     https://forum.airnowtech.org/t/the-nowcast-for-pm2-5-and-pm10/172
-    
+
     https://mazamascience.github.io/AirMonitor/articles/NowCast.html#does-most-recent-include-current
-    - Another reason for including the “current” hour in the NowCast “three most recent hours” is for speed of updates. 
-    Suppose it is 12:04, and a measurement just came in at 12:00 (the Hour 11 measurement). 
-    It would be inappropriate to wait until 13:00 to calculate the updated NowCast value. 
+    - Another reason for including the “current” hour in the NowCast “three most recent hours” is for speed of updates.
+    Suppose it is 12:04, and a measurement just came in at 12:00 (the Hour 11 measurement).
+    It would be inappropriate to wait until 13:00 to calculate the updated NowCast value.
     For this reason, we calculate NowCast values using the monitored data for the “current” hour and the N−1 prior hours.
-    - As a result of this convention, timestamps are usually an entire hour (or more) earlier than 
+    - As a result of this convention, timestamps are usually an entire hour (or more) earlier than
     the time the measurements were actually taken (exact differences depend on several factors).
     """
 
     readings = {'pm2_5', 'pm10'}
 
-    def __init__(self, logger, log_level,  sub_calculator, sub_field_name):
+    def __init__(self, logger, log_level, sub_calculator, sub_field_name):
         self.logger = logger
         self.log_level = log_level
         self.sub_calculator = sub_calculator
         self.sub_field_name = sub_field_name
 
-    def  _logdbg(self, msg):
+    def _logdbg(self, msg):
         if self.log_level <= 10:
             self.logger.logdbg(f"(NowCast) {msg}")
 
@@ -308,34 +309,37 @@ class NowCast(AbstractCalculator):
             data_range = data_max - data_min
             scaled_rate_change = data_range/data_max
             weight_factor = max((1-scaled_rate_change), .5)
-            numerator = 0
-            denominator = 0
-            for i in range(data_count):
-                if concentrations[i] is not None:
-                    hours_ago = int((current_hour - timestamps[i]) / 3600 + 1)
-                    self._logdbg(f"Hours ago: {hours_ago} pm was: {concentrations[i]}")
-                    numerator += concentrations[i] * (weight_factor ** hours_ago)
-                    denominator += weight_factor ** hours_ago
-
-            concentration = math.trunc((numerator / denominator) * 10) / 10
+            concentration = math.trunc(self._weighted_concentration(current_hour, timestamps, concentrations,
+                                                                    weight_factor) * 10) / 10
             self._logdbg(f"The computed concentration is {concentration}")
 
             return concentration
         except weewx.CannotCalculate as exception:
             raise exception
-        except Exception as exception: # (want to catch all - at least for now) pylint: disable=broad-except
+        except Exception as exception:  # (want to catch all - at least for now) pylint: disable=broad-except
             error_message = f"Error Calculating NowCast with a data_count of {data_count}, data_max is {data_max}, data_min is {data_min}, "
             error_message += f"weight_factor is {weight_factor}.\n"
-            error_message += f"index is {i}, hours_ago is {hours_ago}, concentration is {concentrations[i]}\n"
             error_message += f"There are {len(timestamps)} with values of {timestamps}.\n"
             error_message += f"There are {len(concentrations)} with values of {concentrations}."
             self._logerr(error_message)
             raise CalculationError(error_message) from exception
 
+    def _weighted_concentration(self, current_hour, timestamps, concentrations, weight_factor):
+        """ The weight factor applied average of the readings. """
+        numerator = 0
+        denominator = 0
+        for index, concentration in enumerate(concentrations):
+            if concentration is not None:
+                hours_ago = int((current_hour - timestamps[index]) / 3600 + 1)
+                self._logdbg(f"Hours ago: {hours_ago} pm was: {concentration}")
+                numerator += concentration * (weight_factor ** hours_ago)
+                denominator += weight_factor ** hours_ago
+
+        return numerator / denominator
+
     def calculate(self, aqi_type, inputs):
         # 02/26/2025 - not used, yet (in development)
         self._logdbg(f"The type is '{aqi_type}'")
-        records_iter = inputs
 
         stats = types.SimpleNamespace(
             not_null = False,
@@ -351,90 +355,12 @@ class NowCast(AbstractCalculator):
             mintime = None,
             maxtime = None,
         )
-        i = 1
-        timestamps = []
-        concentrations = []
-        min_concentration = float('inf')
-        max_concentration = -float('inf')
-        for record in records_iter:
-            timestamps.append(record[0])
-            concentrations.append(record[1])
-            if record[1] is not None and  record[1] < min_concentration:
-                min_concentration = record[1]
-            if record[1] is not None and record[1] > max_concentration:
-                max_concentration = record[1]
-
-            if i >= 12:
-                break
-
-            i += 1
 
         aqi_vec = []
         start_vec = []
-        start_vec.append(timestamps[0])
-        try:
-            concentration = self.calculate_concentration(timestamps[0],
-                                                        min_concentration,
-                                                        max_concentration,
-                                                        timestamps,
-                                                        concentrations)
-            aqi = self.sub_calculator.calculate(aqi_type, concentration)
-            aqi_vec.append(aqi)
-            stats.not_null = True
-            stats.count += 1
-            stats.sum += aqi
-            stats.first = aqi
-            stats.firsttime = timestamps[0]
-            if stats.last is None:
-                stats.last = aqi
-                stats.lasttime = timestamps[0]
-            if aqi <= stats.min:
-                stats.min = aqi
-                stats.mintime = timestamps[0]
-            if aqi >= stats.max:
-                stats.max = aqi
-                stats.maxtime = timestamps[0]
-
-        except weewx.CannotCalculate:
-            aqi_vec.append(None)
-
-        if i >= 12:
-            for record in records_iter:
-                del timestamps[0]
-                del concentrations[0]
-
-                timestamps.append(record[0])
-                concentrations.append(record[1])
-                if record[1] < min_concentration:
-                    min_concentration = record[1]
-                if record[1] > max_concentration:
-                    max_concentration = record[1]
-
-                start_vec.append(timestamps[0])
-                try:
-                    concentration = self.calculate_concentration(timestamps[0],
-                                                                min_concentration,
-                                                                max_concentration,
-                                                                timestamps,
-                                                                concentrations)
-                    aqi = self.sub_calculator.calculate(aqi_type, concentration)
-                    aqi_vec.append(aqi)
-                    stats.not_null = True
-                    stats. count += 1
-                    stats.sum += aqi
-                    stats.first = aqi
-                    stats.firsttime = timestamps[0]
-                    if stats.last is None:
-                        stats.last = aqi
-                        stats.lasttime = timestamps[0]
-                    if aqi <= stats.min:
-                        stats.min = aqi
-                        stats.mintime = timestamps[0]
-                    if aqi >= stats.max:
-                        stats.max = aqi
-                        stats.maxtime = timestamps[0]
-                except weewx.CannotCalculate:
-                    aqi_vec.append(None)
+        for window in self._windows(inputs):
+            start_vec.append(window[0][0])
+            aqi_vec.append(self._window_aqi(aqi_type, stats, window))
 
         start_vec.reverse()
         stop_vec = start_vec[1:]
@@ -450,7 +376,70 @@ class NowCast(AbstractCalculator):
 
         return stats, start_vec, stop_vec, aqi_vec
 
-class EPAAQI(AbstractCalculator):
+    @staticmethod
+    def _windows(inputs):
+        """ Yield the (timestamps, concentrations, min, max) window of each reading. """
+        timestamps = []
+        concentrations = []
+        min_concentration = float('inf')
+        max_concentration = -float('inf')
+        count = 0
+        for count, record in enumerate(inputs, start=1):
+            timestamps.append(record[0])
+            concentrations.append(record[1])
+            if record[1] is not None:
+                min_concentration = min(min_concentration, record[1])
+                max_concentration = max(max_concentration, record[1])
+            if count >= 12:
+                break
+
+        yield (timestamps, concentrations, min_concentration, max_concentration)
+
+        if count < 12:
+            return
+
+        for record in inputs:
+            del timestamps[0]
+            del concentrations[0]
+            timestamps.append(record[0])
+            concentrations.append(record[1])
+            min_concentration = min(min_concentration, record[1])
+            max_concentration = max(max_concentration, record[1])
+            yield (timestamps, concentrations, min_concentration, max_concentration)
+
+    def _window_aqi(self, aqi_type, stats, window):
+        """ The AQI of a window, recorded in the stats; None when it can not be calculated. """
+        timestamps, concentrations, min_concentration, max_concentration = window
+        try:
+            concentration = self.calculate_concentration(timestamps[0], min_concentration, max_concentration,
+                                                         timestamps, concentrations)
+            aqi = self.sub_calculator.calculate(aqi_type, concentration)
+        except weewx.CannotCalculate:
+            return None
+
+        self._update_stats(stats, aqi, timestamps[0])
+        return aqi
+
+    @staticmethod
+    def _update_stats(stats, aqi, timestamp):
+        """ Add a reading's AQI to the running aggregate. """
+        stats.not_null = True
+        stats.count += 1
+        stats.sum += aqi
+        stats.first = aqi
+        stats.firsttime = timestamp
+        if stats.last is None:
+            stats.last = aqi
+            stats.lasttime = timestamp
+        if aqi <= stats.min:
+            stats.min = aqi
+            stats.mintime = timestamp
+        if aqi >= stats.max:
+            stats.max = aqi
+            stats.maxtime = timestamp
+
+    # The calculators are asked for one thing, a calculation.
+class EPAAQI(AbstractCalculator):  # pylint: disable=too-few-public-methods
     """
     Class for calculating the EPA'S AQI.
     """
@@ -484,7 +473,7 @@ class EPAAQI(AbstractCalculator):
             ]
         },
         'pm10': {
-            'prep_data': lambda x: math.trunc(x), # pylint: disable=unnecessary-lambda
+            'prep_data': lambda x: math.trunc(x),  # pylint: disable=unnecessary-lambda
             'breakpoints': [
                 {'min': 0.0, 'max': 54},
                 {'min': 55, 'max': 154},
@@ -496,11 +485,11 @@ class EPAAQI(AbstractCalculator):
         }
     }
 
-    def __init__(self, logger, log_level, sub_calculator, sub_field_name): # Need to match signature pylint: disable=unused-argument
+    def __init__(self, logger, log_level, sub_calculator, sub_field_name):  # Need to match signature pylint: disable=unused-argument
         self.logger = logger
         self.log_level = log_level
 
-    def  _logdbg(self, msg):
+    def _logdbg(self, msg):
         if self.log_level <= 10:
             self.logger.logdbg(f"(EPAAQI) {msg}")
 
@@ -542,7 +531,7 @@ class EPAAQI(AbstractCalculator):
                 index += 1
 
             if index >= breakpoint_count:
-                index =  len(readings['breakpoints']) - 1
+                index = len(readings['breakpoints']) - 1
 
             reading_bp_max = readings['breakpoints'][index]['max']
             reading_bp_min = readings['breakpoints'][index]['min']
@@ -558,7 +547,7 @@ class EPAAQI(AbstractCalculator):
             self._logdbg(f"The computed AQI is {aqi}")
 
             return aqi
-        except Exception as exception: # (want to catch all - at least for now) pylint: disable=broad-except
+        except Exception as exception:  # (want to catch all - at least for now) pylint: disable=broad-except
             error_message = f"Error Calculating EPAAQI with a type of {aqi_type}, reading is {reading}, "
             error_message += "breakpoint_count is {breakpoint_count}.\n"
             error_message += f"The AQI breakpoint index is {index},  max is {aqi_bp_max}, and the min is {aqi_bp_min}.\n"
@@ -566,7 +555,8 @@ class EPAAQI(AbstractCalculator):
             self._logerr(error_message)
             raise CalculationError(error_message) from exception
 
-class EPAAQIDeprecatedV0(EPAAQI):
+    # The calculators are asked for one thing, a calculation.
+class EPAAQIDeprecatedV0(EPAAQI):  # pylint: disable=too-few-public-methods
     """
     Class for calculating the EPA'S AQI.
     This is the algorithm (breakpoints) used to calculate the EPA AQI prior to 2024.
@@ -594,11 +584,11 @@ class EPAAQIDeprecatedV0(EPAAQI):
                 {'min': 55.5, 'max': 150.4},
                 {'min': 150.5, 'max': 250.4},
                 {'min': 250.5, 'max': 350.4},
-                {'min': 350.5, 'max': 500.4,},
+                {'min': 350.5, 'max': 500.4, },
             ]
         },
         'pm10': {
-            'prep_data': lambda x: math.trunc(x), # pylint: disable=unnecessary-lambda
+            'prep_data': lambda x: math.trunc(x),  # pylint: disable=unnecessary-lambda
             'breakpoints': [
                 {'min': 0.0, 'max': 54},
                 {'min': 55, 'max': 154},
@@ -625,31 +615,37 @@ class AQIType(weewx.xtypes.XType):
             self.aqi_fields[field] = config_dict[field]
         default_log_level = config_dict.get('log_level', 20)
 
-        for field, field_option in self.aqi_fields.items():
-            sub_calculator = None
-            sub_field_name = None
-            log_level = to_int(config_dict[field].get('log_level', default_log_level))
-            if field_option['algorithm'] == 'NowCast' or field_option['algorithm'] == 'NOWCAST':
-                field_option['algorithm'] = 'NowCast'
-                if field_option['type'] not in NowCast.readings:
-                    raise ValueError(f"Algorithm 'NowCast' is not supported for pollutant '{field_option['type']}'")
-                field_option['support_aggregation'] = False
-                field_option['support_series'] = False
-                sub_calculator = getattr(sys.modules[__name__], 'EPAAQI')(self.logger, log_level, None, None)
-                sub_field_name = field_option['input']
-                field_option['get_aggregate'] = self._get_aggregate_nowcast
-                field_option['get_series'] = self._get_series_nowcast
-                field_option['get_scalar'] = self._get_scalar_nowcast
-            else:
-                if field_option['type'] not in EPAAQI.readings:
-                    raise ValueError(f"Algorithm 'EPAAQI' is not supported for pollutant '{field_option['type']}'")
-                field_option['support_aggregation'] = True
-                field_option['support_series'] = True
-                field_option['get_aggregate'] = self._get_aggregate_epaaqi
-                field_option['get_series'] = self._get_series_epaaqi
-                field_option['get_scalar'] = self._get_scalar_epaaqi
-            field_option['calculator']  = \
-                  getattr(sys.modules[__name__], field_option['algorithm'])(self.logger, log_level, sub_calculator, sub_field_name)
+        for field_option in self.aqi_fields.values():
+            self._setup_field(field_option, default_log_level)
+
+    def _setup_field(self, field_option, default_log_level):
+        """ Resolve the calculator and the accessors of one field's algorithm. """
+        log_level = to_int(field_option.get('log_level', default_log_level))
+        sub_calculator = None
+        sub_field_name = None
+
+        if field_option['algorithm'] in ('NowCast', 'NOWCAST'):
+            field_option['algorithm'] = 'NowCast'
+            if field_option['type'] not in NowCast.readings:
+                raise ValueError(f"Algorithm 'NowCast' is not supported for pollutant '{field_option['type']}'")
+            field_option['support_aggregation'] = False
+            field_option['support_series'] = False
+            sub_calculator = EPAAQI(self.logger, log_level, None, None)
+            sub_field_name = field_option['input']
+            field_option['get_aggregate'] = self._get_aggregate_nowcast
+            field_option['get_series'] = self._get_series_nowcast
+            field_option['get_scalar'] = self._get_scalar_nowcast
+        else:
+            if field_option['type'] not in EPAAQI.readings:
+                raise ValueError(f"Algorithm 'EPAAQI' is not supported for pollutant '{field_option['type']}'")
+            field_option['support_aggregation'] = True
+            field_option['support_series'] = True
+            field_option['get_aggregate'] = self._get_aggregate_epaaqi
+            field_option['get_series'] = self._get_series_epaaqi
+            field_option['get_scalar'] = self._get_scalar_epaaqi
+
+        calculator_class = getattr(sys.modules[__name__], field_option['algorithm'])
+        field_option['calculator'] = calculator_class(self.logger, log_level, sub_calculator, sub_field_name)
 
     def _logdbg(self, msg):
         self.logger.logdbg(f"(XTYPE) {msg}")
@@ -673,11 +669,7 @@ class AQIType(weewx.xtypes.XType):
         if record[dependent_field] is None:
             raise weewx.CannotCalculate(obs_type)
 
-        start_timestamp = time.time()
         aqi = self.aqi_fields[obs_type]['get_scalar'](obs_type, db_manager, record['dateTime'], record[dependent_field])
-        end_timestamp = time.time()
-        running_timestamp = end_timestamp - start_timestamp
-        #self._loginf(f"(performance) {running_timestamp:0.10f} scalar for {obs_type}")
 
         unit_type, group = weewx.units.getStandardUnitType(record['usUnits'], obs_type)
         return weewx.units.ValueTuple(aqi, unit_type, group)
@@ -687,11 +679,7 @@ class AQIType(weewx.xtypes.XType):
         if obs_type not in self.aqi_fields:
             raise weewx.UnknownType(obs_type)
 
-        start_timestamp = time.time()
         return_value = self.aqi_fields[obs_type]['get_series'](obs_type, timespan, db_manager, aggregate_type, aggregate_interval, **option_dict)
-        end_timestamp = time.time()
-        running_timestamp = end_timestamp - start_timestamp
-        #self._loginf(f"(performance) {running_timestamp:0.10f} series {aggregate_type} {aggregate_interval} for {obs_type} {timespan}")
 
         return return_value
 
@@ -700,11 +688,7 @@ class AQIType(weewx.xtypes.XType):
         if obs_type not in self.aqi_fields:
             raise weewx.UnknownType(obs_type)
 
-        start_timestamp = time.time()
         return_value = self.aqi_fields[obs_type]['get_aggregate'](obs_type, timespan, aggregate_type, db_manager, **option_dict)
-        end_timestamp = time.time()
-        running_timestamp = end_timestamp - start_timestamp
-        #self._loginf(f"(performance) {running_timestamp:0.10f} aggregate {aggregate_type} for {obs_type} {timespan}")
 
         return return_value
 
@@ -736,112 +720,112 @@ class AQIType(weewx.xtypes.XType):
 
         return aqi
 
-    def _get_series_nowcast(self, obs_type, timespan, db_manager, aggregate_type, aggregate_interval, **option_dict):
-        unit, unit_group = weewx.units.getStandardUnitType(db_manager.std_unit_system, obs_type, aggregate_type)
-
-        # Because other XTypes will also try, an empty 'set' of data is returned.
-        if timespan.stop - timespan.start < 3600:
-            #raise weewx.UnknownAggregation
-            self._logerr("Series less than a hour are not supported.")
-            return (ValueTuple([], 'unix_epoch', 'group_time'),
-                    ValueTuple([], 'unix_epoch', 'group_time'),
-                    ValueTuple([], unit, unit_group))
-
-        if aggregate_type:
-            start_list = []
-            stop_list = []
-            aqi_list = []
-
-            startstamp, stopstamp = timespan
-            for stamp in weeutil.weeutil.intervalgen(startstamp, stopstamp, aggregate_interval):
-                if db_manager.first_timestamp is None or stamp.stop <= db_manager.first_timestamp:
-                    continue
-                if db_manager.last_timestamp is None or stamp.start >= db_manager.last_timestamp:
-                    break
-
-                try:
-                    agg_vt = self.get_aggregate(obs_type, stamp, aggregate_type, db_manager, **option_dict)
-                except weewx.CannotCalculate:
-                    agg_vt = ValueTuple(None, unit, unit_group)
-
-                if unit:
-                    if agg_vt[1] is not None and (unit != agg_vt[1] or unit_group != agg_vt[2]):
-                        raise weewx.UnsupportedFeature("Cannot change units within a series.")
-                else:
-                    unit, unit_group = agg_vt[1], agg_vt[2]
-
-                start_list.append(stamp.start)
-                stop_list.append(stamp.stop)
-                aqi_list.append(agg_vt[0])
-        else:
-            aqi_type = self.aqi_fields[obs_type]['type']
-            dependent_field = self.aqi_fields[obs_type]["input"]
-            stop = min(weeutil.weeutil.startOfInterval(time.time(), 3600), timespan.stop)
-            # 'Need' 11 hours of data after current hour to compute nowcast qai
-            start_time = timespan.start - 43200 + 3600
-            records_iter = self.sql_executor.get_concentration_data_nowcast(db_manager, dependent_field, stop , start_time)
-
-            _stats, start_list, stop_list, aqi_list = self.aqi_fields[obs_type]['calculator'].calculate(aqi_type, records_iter)
-
-        return (ValueTuple(start_list, 'unix_epoch', 'group_time'),
-                ValueTuple(stop_list, 'unix_epoch', 'group_time'),
-                ValueTuple(aqi_list, unit, unit_group))
-
-    def _get_series_epaaqi(self, obs_type, timespan, db_manager, aggregate_type, aggregate_interval, **option_dict):
-        aqi_type = self.aqi_fields[obs_type]['type']
-        dependent_field = self.aqi_fields[obs_type]['input']
-
+    def _aggregate_series(self, obs_type, timespan, db_manager, aggregate_type, aggregate_interval, **option_dict):
+        """ The start, stop, and value vectors of an aggregated series, and their units. """
         start_vec = []
         stop_vec = []
         data_vec = []
         unit = None
         unit_group = None
 
+        for stamp in weeutil.weeutil.intervalgen(timespan.start, timespan.stop, aggregate_interval):
+            if db_manager.first_timestamp is None or stamp.stop <= db_manager.first_timestamp:
+                continue
+            if db_manager.last_timestamp is None or stamp.start >= db_manager.last_timestamp:
+                break
+
+            try:
+                agg_vt = self.get_aggregate(obs_type, stamp, aggregate_type, db_manager, **option_dict)
+            except weewx.CannotCalculate:
+                agg_vt = ValueTuple(None, unit, unit_group)
+
+            unit, unit_group = self._series_units(unit, unit_group, agg_vt)
+
+            start_vec.append(stamp.start)
+            stop_vec.append(stamp.stop)
+            data_vec.append(agg_vt[0])
+
+        return start_vec, stop_vec, data_vec, unit, unit_group
+
+    def _nowcast_series(self, obs_type, timespan, db_manager):
+        """ The start, stop, and value vectors of a nowcast series. """
+        aqi_type = self.aqi_fields[obs_type]['type']
+        dependent_field = self.aqi_fields[obs_type]['input']
+        stop = min(weeutil.weeutil.startOfInterval(time.time(), 3600), timespan.stop)
+        # 'Need' 11 hours of data after current hour to compute nowcast qai
+        start_time = timespan.start - 43200 + 3600
+        records_iter = self.sql_executor.get_concentration_data_nowcast(db_manager, dependent_field, stop, start_time)
+
+        _stats, start_vec, stop_vec, aqi_vec = self.aqi_fields[obs_type]['calculator'].calculate(aqi_type, records_iter)
+        return start_vec, stop_vec, aqi_vec
+
+    def _reading_series(self, obs_type, timespan, db_manager, aggregate_type):
+        """ The start, stop, and value vectors of a series with one point per reading. """
+        start_vec = []
+        stop_vec = []
+        data_vec = []
+        std_unit_system = None
+
+        for timestamp, unit_system, interval, input_value in \
+                self.sql_executor.get_concentration_data(self.aqi_fields[obs_type]['input'], timespan, db_manager):
+            if std_unit_system:
+                if std_unit_system != unit_system:
+                    raise weewx.UnsupportedFeature("Unit type cannot change within a time interval.")
+            else:
+                std_unit_system = unit_system
+
+            start_vec.append(timestamp - interval * 60)
+            stop_vec.append(timestamp)
+            data_vec.append(self._reading_aqi(obs_type, input_value))
+
+        unit, unit_group = weewx.units.getStandardUnitType(std_unit_system, obs_type, aggregate_type)
+        return start_vec, stop_vec, data_vec, unit, unit_group
+
+    def _reading_aqi(self, obs_type, input_value):
+        """ The AQI of one reading, or None when it can not be calculated. """
+        try:
+            return self.aqi_fields[obs_type]['calculator'].calculate(self.aqi_fields[obs_type]['type'], input_value)
+        except weewx.CannotCalculate:
+            return None
+
+    @staticmethod
+    def _series_units(unit, unit_group, agg_vt):
+        """ The units of a series, refusing a change of units within it. """
+        if not unit:
+            return agg_vt[1], agg_vt[2]
+        if agg_vt[1] is not None and (unit != agg_vt[1] or unit_group != agg_vt[2]):
+            raise weewx.UnsupportedFeature("Cannot change units within a series.")
+        return unit, unit_group
+
+    def _get_series_nowcast(self, obs_type, timespan, db_manager, aggregate_type, aggregate_interval, **option_dict):
+        # Because other XTypes will also try, an empty 'set' of data is returned.
+        if timespan.stop - timespan.start < 3600:
+            # raise weewx.UnknownAggregation
+            self._logerr("Series less than a hour are not supported.")
+            unit, unit_group = weewx.units.getStandardUnitType(db_manager.std_unit_system, obs_type, aggregate_type)
+            return (ValueTuple([], 'unix_epoch', 'group_time'),
+                    ValueTuple([], 'unix_epoch', 'group_time'),
+                    ValueTuple([], unit, unit_group))
+
         if aggregate_type:
-            startstamp, stopstamp = timespan
-            for stamp in weeutil.weeutil.intervalgen(startstamp, stopstamp, aggregate_interval):
-                if db_manager.first_timestamp is None or stamp.stop <= db_manager.first_timestamp:
-                    continue
-                if db_manager.last_timestamp is None or stamp.start >= db_manager.last_timestamp:
-                    break
-
-                try:
-                    agg_vt = self.get_aggregate(obs_type, stamp, aggregate_type, db_manager, **option_dict)
-                except weewx.CannotCalculate:
-                    agg_vt = ValueTuple(None, unit, unit_group)
-
-                if unit:
-                    if agg_vt[1] is not None and (unit != agg_vt[1] or unit_group != agg_vt[2]):
-                        raise weewx.UnsupportedFeature("Cannot change units within a series.")
-                else:
-                    unit, unit_group = agg_vt[1], agg_vt[2]
-
-                start_vec.append(stamp.start)
-                stop_vec.append(stamp.stop)
-                data_vec.append(agg_vt[0])
+            start_list, stop_list, aqi_list, unit, unit_group = self._aggregate_series(
+                obs_type, timespan, db_manager, aggregate_type, aggregate_interval, **option_dict)
+            if not unit:
+                unit, unit_group = weewx.units.getStandardUnitType(db_manager.std_unit_system, obs_type, aggregate_type)
         else:
-            std_unit_system = None
-            records_iter = self.sql_executor.get_concentration_data(dependent_field, timespan, db_manager)
+            start_list, stop_list, aqi_list = self._nowcast_series(obs_type, timespan, db_manager)
+            unit, unit_group = weewx.units.getStandardUnitType(db_manager.std_unit_system, obs_type, aggregate_type)
 
-            for record in records_iter:
-                aqi = None
-                timestamp, unit_system, interval, input_value = record
-                if std_unit_system:
-                    if std_unit_system != unit_system:
-                        raise weewx.UnsupportedFeature("Unit type cannot change within a time interval.")
-                else:
-                    std_unit_system = unit_system
+        return (ValueTuple(start_list, 'unix_epoch', 'group_time'),
+                ValueTuple(stop_list, 'unix_epoch', 'group_time'),
+                ValueTuple(aqi_list, unit, unit_group))
 
-                try:
-                    aqi = self.aqi_fields[obs_type]['calculator'].calculate(aqi_type, (input_value))
-                except weewx.CannotCalculate:
-                    aqi = None
-
-                start_vec.append(timestamp - interval * 60)
-                stop_vec.append(timestamp)
-                data_vec.append(aqi)
-
-            unit, unit_group = weewx.units.getStandardUnitType(std_unit_system, obs_type, aggregate_type)
+    def _get_series_epaaqi(self, obs_type, timespan, db_manager, aggregate_type, aggregate_interval, **option_dict):
+        if aggregate_type:
+            start_vec, stop_vec, data_vec, unit, unit_group = self._aggregate_series(
+                obs_type, timespan, db_manager, aggregate_type, aggregate_interval, **option_dict)
+        else:
+            start_vec, stop_vec, data_vec, unit, unit_group = self._reading_series(obs_type, timespan, db_manager, aggregate_type)
 
         return (ValueTuple(start_vec, 'unix_epoch', 'group_time'),
                 ValueTuple(stop_vec, 'unix_epoch', 'group_time'),
@@ -849,30 +833,66 @@ class AQIType(weewx.xtypes.XType):
 
     def _get_aggregate_nowcast(self, obs_type, timespan, aggregate_type, db_manager, **_option_dict):
         # Because XTypeTable will also try, 'None' is returned.
+        aggregate_value = None
         if timespan.stop - timespan.start < 3600:
             self._logerr("Aggregate intervals less than a day are not supported.")
-            aggregate_value = None
-            #raise weewx.UnknownAggregation
+            # raise weewx.UnknownAggregation
         else:
-            aqi_type = self.aqi_fields[obs_type]['type']
-            dependent_field = self.aqi_fields[obs_type]['input']
-            stop = min(weeutil.weeutil.startOfInterval(time.time(), 3600), timespan.stop)
-            # 'Need' 11 hours of data after current hour to compute nowcast qai
-            start_time = timespan.start - 43200 + 3600
-
-            records_iter = self.sql_executor.get_concentration_data_nowcast(db_manager, dependent_field, stop , start_time)
-            stats, _start_vec, _stop_vec, _data_vec = self.aqi_fields[obs_type]['calculator'].calculate(aqi_type, records_iter)
-            stats_dict = vars(stats)
-            try:
-                aggregate_value = stats_dict[aggregate_type]
-            except KeyError:
-                # Because XTypeTable will also try, 'None' is returned.
-                self._logerr(f"Agregate type '{aggregate_type}' is not supported.")
-                aggregate_value = None
-                # raise weewx.UnknownAggregation(aggregate_type)
+            aggregate_value = self._nowcast_stats_value(obs_type, timespan, aggregate_type, db_manager)
 
         unit_type, group = weewx.units.getStandardUnitType(db_manager.std_unit_system, obs_type, aggregate_type)
         return weewx.units.ValueTuple(aggregate_value, unit_type, group)
+
+    def _nowcast_stats_value(self, obs_type, timespan, aggregate_type, db_manager):
+        """ One of the nowcast stats, or None when it is not one of them. """
+        aqi_type = self.aqi_fields[obs_type]['type']
+        dependent_field = self.aqi_fields[obs_type]['input']
+        stop = min(weeutil.weeutil.startOfInterval(time.time(), 3600), timespan.stop)
+        # 'Need' 11 hours of data after current hour to compute nowcast qai
+        start_time = timespan.start - 43200 + 3600
+        records_iter = self.sql_executor.get_concentration_data_nowcast(db_manager, dependent_field, stop, start_time)
+        stats, _start_vec, _stop_vec, _data_vec = self.aqi_fields[obs_type]['calculator'].calculate(aqi_type, records_iter)
+
+        try:
+            return vars(stats)[aggregate_type]
+        except KeyError:
+            # Because XTypeTable will also try, 'None' is returned.
+            self._logerr(f"Agregate type '{aggregate_type}' is not supported.")
+            return None
+
+    def _aggregate_query_value(self, obs_type, aqi_type, records_iter, aggregate_type):
+        """ The sum, or average, of the values an aggregate query returned. """
+        input_values = []
+        for row in records_iter:
+            try:
+                input_value = self.aqi_fields[obs_type]['calculator'].calculate(aqi_type, row[0])
+            except weewx.CannotCalculate:
+                input_value = None
+
+            if input_value is not None:
+                input_values.append(input_value)
+
+        if not input_values:
+            return None
+
+        aggregate_value = sum(input_values)
+        if aggregate_type == 'avg':
+            aggregate_value = round(aggregate_value / len(input_values))
+        return aggregate_value
+
+    def _simple_query_value(self, obs_type, aqi_type, query_type, records_iter):
+        """ The value of a simple query, or the single row a first or last query returned. """
+        rows = list(records_iter)
+        row = rows[0] if rows else None
+        if not row or None in row:
+            return None
+        if query_type == 'simple':
+            return row[0]
+
+        try:
+            return self.aqi_fields[obs_type]['calculator'].calculate(aqi_type, row[0])
+        except weewx.CannotCalculate:
+            return None
 
     def _get_aggregate_epaaqi(self, obs_type, timespan, aggregate_type, db_manager, **_option_dict):
         aqi_type = self.aqi_fields[obs_type]['type']
@@ -881,40 +901,9 @@ class AQIType(weewx.xtypes.XType):
         query_type, records_iter = self.sql_executor.get_aggregate_concentation_data(dependent_field, timespan, aggregate_type, db_manager)
 
         if query_type == 'aggregate':
-            input_values = []
-            aggregate_value = None
-            for row in records_iter:
-                try:
-                    input_value = self.aqi_fields[obs_type]['calculator'].calculate(aqi_type, (row[0]))
-                except weewx.CannotCalculate:
-                    input_value = None
-
-                if input_value is not None:
-                    input_values.append(input_value)
-
-            if input_values:
-                aggregate_value = sum(input_values)
-                if aggregate_type == 'avg':
-                    aggregate_value = round(aggregate_value / len(input_values))
+            aggregate_value = self._aggregate_query_value(obs_type, aqi_type, records_iter, aggregate_type)
         else:
-            rows = list(records_iter)
-            if len(rows) == 0:
-                row = None
-            else:
-                row = rows[0]
-
-            if not row or None in row:
-                input_value = None
-            else:
-                input_value = row[0]
-
-            if query_type == 'simple':
-                aggregate_value = input_value
-            else:
-                try:
-                    aggregate_value = self.aqi_fields[obs_type]['calculator'].calculate(aqi_type, (input_value))
-                except weewx.CannotCalculate:
-                    aggregate_value = None
+            aggregate_value = self._simple_query_value(obs_type, aqi_type, query_type, records_iter)
 
         unit_type, group = weewx.units.getStandardUnitType(db_manager.std_unit_system, obs_type, aggregate_type)
         return weewx.units.ValueTuple(aggregate_value, unit_type, group)
@@ -933,8 +922,7 @@ class AQISearchList(weewx.cheetahgenerator.SearchList):
                                  'logdbg': self._logdbg,
                                  'loginf': self._loginf,
                                  'logerr': self._logerr,
-                                 'version': VERSION,
-                                }
+                                 'version': VERSION}
 
         return [search_list_extension]
 
@@ -970,6 +958,6 @@ class AQISearchList(weewx.cheetahgenerator.SearchList):
             index += 1
 
         if index >= breakpoint_count:
-            index =  len(breakpoints) - 1
+            index = len(breakpoints) - 1
 
         return index

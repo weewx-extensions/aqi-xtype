@@ -4,3 +4,5 @@ sql/
 bin/user/tests/utils/*.sdb
 bin/user/tests/utils/*.sqbpro
 act-artifacts/
+results/
+coverage.xml

@@ -14,17 +14,15 @@ import mock
 import user.aqitype
 
 def random_string(length=32):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)]) # pylint: disable=unused-variable
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])  # pylint: disable=unused-variable
 
 def min_max(values):
     min_value = float('inf')
     max_value = -float('inf')
     for value in values:
         if value is not None:
-            if value < min_value:
-                min_value = value
-            if value > max_value:
-                max_value = value
+            min_value = min(min_value, value)
+            max_value = max(max_value, value)
     return min_value, max_value
 
 class TestNowCastCalculate(unittest.TestCase):
@@ -42,7 +40,7 @@ class TestNowCastCalculate(unittest.TestCase):
 
     def test_incomplete_data(self):
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         data = [random.uniform(0, 700)]
         timestamps = self._populate_time_stamps(current_hour, len(data))
@@ -76,7 +74,7 @@ class TestNowCastCalculate(unittest.TestCase):
 
     def test_beginning_missing_data(self):
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         data = [random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700)]
         timestamps = self._populate_time_stamps(current_hour, len(data))
@@ -113,12 +111,12 @@ class TestNowCastCalculate(unittest.TestCase):
 
     def test_missing_middle_data(self):
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         data = [149.5, 149.9, 238.6, None, None, None, None, None, 763.8, 744.6, 734.0, 711.8]
         timestamps = self._populate_time_stamps(current_hour, len(data))
         i = len(data) - 1
-        while i >= 0 :
+        while i >= 0:
             if data[i] is None:
                 del data[i]
                 del timestamps[i]
@@ -155,7 +153,7 @@ class TestNowCastCalculate(unittest.TestCase):
 
     def test_beginning_none_data(self):
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         data = [None,
                 None,
@@ -193,7 +191,7 @@ class TestNowCastCalculate(unittest.TestCase):
 
     def test_middle_none_data(self):
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         data = [149.5, 149.9, 238.6, None, None, None, None, None, 763.8, 744.6, 734.0, 711.8]
         timestamps  = self._populate_time_stamps(current_hour, len(data))
@@ -229,7 +227,7 @@ class TestNowCastCalculate(unittest.TestCase):
 
     def test_calculate_concentration(self):
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         data = [46.3, 27.4, 59.8, 129.2, 130.6, 215.4, 143.2, 93.7, 101.8, 49.3, 80.2, 123.3]
         timestamps = self._populate_time_stamps(current_hour, len(data))
@@ -247,7 +245,7 @@ class TestNowCastCalculate(unittest.TestCase):
 
         stats, start_vec, stop_vec, aqi_vec = SUT.calculate(aqi_type, iter(records))
 
-        aqi_values=[149]
+        aqi_values = [149]
         self.assertTrue(stats.not_null)
         self.assertEqual(stats.count, 1)
         self.assertEqual(stats.sum, sum(aqi_values))

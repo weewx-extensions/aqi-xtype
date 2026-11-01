@@ -16,17 +16,15 @@ import weeutil
 import user.aqitype
 
 def random_string(length=32):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)]) # pylint: disable=unused-variable
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])  # pylint: disable=unused-variable
 
 def min_max(values):
     min_value = float('inf')
     max_value = -float('inf')
     for value in values:
         if value is not None:
-            if value < min_value:
-                min_value = value
-            if value > max_value:
-                max_value = value
+            min_value = min(min_value, value)
+            max_value = max(max_value, value)
     return min_value, max_value
 
 def populate_time_stamps(current_hour, count):
@@ -42,11 +40,11 @@ class TestNowCastCalculate(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):
-                with mock.patch.object(user.aqitype.NowCast, 'calculate_concentration',side_effect=weewx.CannotCalculate):
+                with mock.patch.object(user.aqitype.NowCast, 'calculate_concentration', side_effect=weewx.CannotCalculate):
                     data = [random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700)]
                     timestamps = populate_time_stamps(current_hour, len(data))
                     # remove  1 and 2 hours ago data
@@ -85,7 +83,7 @@ class TestNowCastCalculate(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):
@@ -97,7 +95,7 @@ class TestNowCastCalculate(unittest.TestCase):
                             random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700)]
                     timestamps = populate_time_stamps(current_hour, len(data))
                     i = len(data) - 1
-                    while i >= 0 :
+                    while i >= 0:
                         if data[i] is None:
                             del data[i]
                             del timestamps[i]
@@ -111,7 +109,7 @@ class TestNowCastCalculate(unittest.TestCase):
                         records.append((timestamps[i], concentration))
                         i += 1
 
-                    sub_calculator= mock.Mock()
+                    sub_calculator = mock.Mock()
                     sub_calculator.calculate.side_effect = aqi_values
                     calculator = user.aqitype.NowCast(mock_logger, 0, sub_calculator, None)
 
@@ -137,13 +135,13 @@ class TestNowCastCalculate(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):
                 with mock.patch.object(user.aqitype.NowCast, 'calculate_concentration', side_effect=['foo', 'bar', weewx.CannotCalculate]):
 
-                    aqi_values = [random.randint(0, 500), random.randint(0,500)]
+                    aqi_values = [random.randint(0, 500), random.randint(0, 500)]
                     data = [random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700),
                             None, None, random.uniform(0, 700),
                             random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700),
@@ -159,7 +157,7 @@ class TestNowCastCalculate(unittest.TestCase):
                         records.append((timestamps[i], concentration))
                         i += 1
 
-                    sub_calculator= mock.Mock()
+                    sub_calculator = mock.Mock()
                     sub_calculator.calculate.side_effect = aqi_values
                     calculator = user.aqitype.NowCast(mock_logger, 0, sub_calculator, None)
 
@@ -185,12 +183,12 @@ class TestNowCastCalculate(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):
                 with mock.patch.object(user.aqitype.NowCast, 'calculate_concentration'):
-                    aqi_values = [random.randint(0, 500), random.randint(0,500)]
+                    aqi_values = [random.randint(0, 500), random.randint(0, 500)]
                     data = [random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700),
                             random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700),
                             random.uniform(0, 700), random.uniform(0, 700), random.uniform(0, 700),
@@ -206,7 +204,7 @@ class TestNowCastCalculate(unittest.TestCase):
                         records.append((timestamps[i], concentration))
                         i += 1
 
-                    sub_calculator= mock.Mock()
+                    sub_calculator = mock.Mock()
                     sub_calculator.calculate.side_effect = aqi_values
                     calculator = user.aqitype.NowCast(mock_logger, 0, sub_calculator, None)
 
@@ -233,7 +231,7 @@ class TestNowCastCalculateConcentration(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):
@@ -249,7 +247,7 @@ class TestNowCastCalculateConcentration(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):
@@ -268,14 +266,14 @@ class TestNowCastCalculateConcentration(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):
                 data = [149.5, 149.9, 238.6, None, None, None, None, None, 763.8, 744.6, 734.0, 711.8]
                 timestamps = populate_time_stamps(current_hour, len(data))
                 i = len(data) - 1
-                while i >= 0 :
+                while i >= 0:
                     if data[i] is None:
                         del data[i]
                         del timestamps[i]
@@ -290,7 +288,7 @@ class TestNowCastCalculateConcentration(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):
@@ -311,7 +309,7 @@ class TestNowCastCalculateConcentration(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):
@@ -327,7 +325,7 @@ class TestNowCastCalculateConcentration(unittest.TestCase):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
 
         now = time.time()
-        current_hour =  int(now / 3600) * 3600
+        current_hour = int(now / 3600) * 3600
 
         with mock.patch('weeutil.weeutil.startOfInterval', spec=weeutil.weeutil.startOfInterval, return_value=current_hour):
             with mock.patch('weeutil.weeutil.TimeSpan', spec=weeutil.weeutil.TimeSpan):

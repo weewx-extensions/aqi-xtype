@@ -27,7 +27,7 @@ timespan = weeutil.weeutil.TimeSpan(
 
 def _generate_records(pm2_5_column):
     ''' Generate records to be inserted into a WeeWX database. '''
-    pm2_5_values = data.db_20250219_pm2_5_values +  data.db_20250220_pm2_5_values + data.db_20250221_pm2_5_values
+    pm2_5_values = data.db_20250219_pm2_5_values + data.db_20250220_pm2_5_values + data.db_20250221_pm2_5_values
     timestamps = data.db_20250219_timestamps + data.db_20250220_timestamps + data.db_20250221_timestamps
     i = 0
     for date_time in timestamps:
@@ -67,14 +67,13 @@ def get_db_manager(pm2_5_column):
     # ToDo: open an issue
     # If a new database is created and then populated the following do not get set
     # See the following in addRecord method
-    ''' 
-        # Update the cached timestamps. This has to sit outside the transaction context,
-        # in case an exception occurs.
-        if self.first_timestamp is not None:
-            self.first_timestamp = min(min_ts, self.first_timestamp)
-        if self.last_timestamp is not None:
-            self.last_timestamp = max(max_ts, self.last_timestamp)
-    '''
+    # The code the above refers to:
+    #     # Update the cached timestamps. This has to sit outside the transaction context,
+    #     # in case an exception occurs.
+    #     if self.first_timestamp is not None:
+    #         self.first_timestamp = min(min_ts, self.first_timestamp)
+    #     if self.last_timestamp is not None:
+    #         self.last_timestamp = max(max_ts, self.last_timestamp)
     db_manager.first_timestamp = float('inf')
     db_manager.last_timestamp = -float('inf')
 

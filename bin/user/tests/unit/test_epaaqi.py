@@ -12,7 +12,7 @@ import mock
 import user.aqitype
 
 def random_string(length=32):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)]) # pylint: disable=unused-variable
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])  # pylint: disable=unused-variable
 
 # https://www.airnow.gov/aqi/aqi-calculator/
 class TestEPAAQI(unittest.TestCase):

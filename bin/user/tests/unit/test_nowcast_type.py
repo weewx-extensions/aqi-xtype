@@ -28,7 +28,7 @@ import utils.database
 # pylint: enable=import-error, wrong-import-position
 
 def random_string(length=32):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)]) # pylint: disable=unused-variable
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])  # pylint: disable=unused-variable
 
 def setup_config(calculated_field, input_field, algorithm, aqi_type):
     config_dict = {
@@ -99,9 +99,9 @@ class TestNowCastGetSeries(unittest.TestCase):
         mock_aqi_vec = []
         for _ in range(random.randint(2, 11)):
             mock_has_data = random_string()
-            mock_start_vec.append(random.randint(101,200))
-            mock_start_vec.append(random.randint(201,300))
-            mock_aqi_vec.append(random.randint(1,100))
+            mock_start_vec.append(random.randint(101, 200))
+            mock_start_vec.append(random.randint(201, 300))
+            mock_aqi_vec.append(random.randint(1, 100))
 
         with mock.patch.object(calculator, 'calculate', return_value=(mock_has_data, mock_start_vec, mock_stop_vec, mock_aqi_vec)):
             SUT = user.aqitype.AQIType(mock_logger, mock_sql_executor, config)
@@ -190,19 +190,19 @@ class TestNowCastGetSeries(unittest.TestCase):
             with mock.patch('weeutil.weeutil.intervalgen', return_value=timespans):
                 with mock.patch.object(user.aqitype.AQIType, 'get_aggregate', side_effect=aqi_tuples):
                     value_tuple = SUT.get_series(calculated_field,
-                                                timespan,
-                                                mock_db_manager,
-                                                aggregate_type=random_string(),
-                                                aggregate_interval='hour') # ToDo: temp until mocking done
+                                                 timespan,
+                                                 mock_db_manager,
+                                                 aggregate_type=random_string(),
+                                                 aggregate_interval='hour')  # ToDo: temp until mocking done
 
-                self.assertEqual(value_tuple[0], \
-                                ([start_timestamp, start_timestamp + aggregate_interval, start_timestamp + 2*aggregate_interval], \
-                                'unix_epoch', \
-                                'group_time'))
-                self.assertEqual(value_tuple[1], \
-                                ([end_timestamp - 2*aggregate_interval, end_timestamp - aggregate_interval, end_timestamp], \
-                                'unix_epoch', \
-                                'group_time'))
+                self.assertEqual(value_tuple[0],
+                                 ([start_timestamp, start_timestamp + aggregate_interval, start_timestamp + 2*aggregate_interval],
+                                 'unix_epoch',
+                                  'group_time'))
+                self.assertEqual(value_tuple[1],
+                                 ([end_timestamp - 2*aggregate_interval, end_timestamp - aggregate_interval, end_timestamp],
+                                 'unix_epoch',
+                                  'group_time'))
                 self.assertEqual(value_tuple[2], ([aqi_tuples[0][0], aqi_tuples[1][0], aqi_tuples[2][0]], unit, unit_group))
 
 class TestNowCastGetAggregate(unittest.TestCase):
@@ -240,8 +240,8 @@ class TestNowCastGetAggregate(unittest.TestCase):
                 self.assertEqual(aggregate_value, (True, unit, unit_group))
 
 if __name__ == '__main__':
-    #test_suite = unittest.TestSuite()
-    #test_suite.addTest(TestNowCastGetSeries('test_get_series_aggregate'))
-    #unittest.TextTestRunner().run(test_suite)
+    # test_suite = unittest.TestSuite()
+    # test_suite.addTest(TestNowCastGetSeries('test_get_series_aggregate'))
+    # unittest.TextTestRunner().run(test_suite)
 
     unittest.main(exit=False)

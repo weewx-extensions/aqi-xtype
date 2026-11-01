@@ -28,7 +28,7 @@ import utils.database
 # pylint: enable=import-error, wrong-import-position
 
 def random_string(length=32):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)]) # pylint: disable=unused-variable
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])  # pylint: disable=unused-variable
 
 def setup_config(calculated_field, input_field, algorithm, aqi_type):
     config_dict = {
@@ -120,12 +120,12 @@ class TestGetSeries(unittest.TestCase):
                     SUT.get_series(calculated_field, weeutil.weeutil.TimeSpan(end_timestamp-3600, end_timestamp), mock_db_manager)
 
                 self.assertEqual(start_vec_t,
-                                ([end_timestamp - 2 * utils.database.ARCHIVE_INTERVAL_SECONDS,
-                                end_timestamp - utils.database.ARCHIVE_INTERVAL_SECONDS],
-                                'unix_epoch',
-                                'group_time'))
+                                 ([end_timestamp - 2 * utils.database.ARCHIVE_INTERVAL_SECONDS,
+                                  end_timestamp - utils.database.ARCHIVE_INTERVAL_SECONDS],
+                                  'unix_epoch',
+                                  'group_time'))
                 self.assertEqual(stop_vec_t,
-                                ([end_timestamp - utils.database.ARCHIVE_INTERVAL_SECONDS, end_timestamp], 'unix_epoch', 'group_time'))
+                                 ([end_timestamp - utils.database.ARCHIVE_INTERVAL_SECONDS, end_timestamp], 'unix_epoch', 'group_time'))
                 self.assertEqual(data_vec_t, (aqi, unit, unit_group))
 
 class TestGetAggregate(unittest.TestCase):
@@ -168,7 +168,7 @@ class TestGetAggregate(unittest.TestCase):
 
     def test_get_aggregation_min_valid_inputs(self):
         mock_logger = mock.Mock(spec=user.aqitype.Logger)
-        mock_sql_executor= mock.Mock()
+        mock_sql_executor = mock.Mock()
         mock_db_manager = mock.Mock()
 
         calculator = user.aqitype.EPAAQI
@@ -216,7 +216,7 @@ class TestGetAggregate(unittest.TestCase):
         config_dict = setup_config(calculated_field, input_field, algorithm, aqi_type)
         config = configobj.ConfigObj(config_dict)
 
-        SUT = user.aqitype.AQIType(mock_logger, mock_sql_executor (), config)
+        SUT = user.aqitype.AQIType(mock_logger, mock_sql_executor(), config)
 
         unit = random_string()
         unit_group = random_string()
@@ -235,24 +235,24 @@ class TestGetAggregate(unittest.TestCase):
                       (random.randint(11, 100), unit, unit_group)]
         with mock.patch.object(user.aqitype.AQIType, 'get_aggregate', side_effect=aqi_tuples):
             value_tuple  = SUT.get_series(calculated_field,
-                                        timespan,
-                                        mock_db_manager,
-                                        aggregate_type=random_string(),
-                                        aggregate_interval=aggregate_interval)
+                                          timespan,
+                                          mock_db_manager,
+                                          aggregate_type=random_string(),
+                                          aggregate_interval=aggregate_interval)
 
-            self.assertEqual(value_tuple[0], \
-                             ([start_timestamp, start_timestamp + aggregate_interval, start_timestamp + 2*aggregate_interval], \
-                              'unix_epoch', \
+            self.assertEqual(value_tuple[0],
+                             ([start_timestamp, start_timestamp + aggregate_interval, start_timestamp + 2*aggregate_interval],
+                              'unix_epoch',
                               'group_time'))
-            self.assertEqual(value_tuple[1], \
-                             ([end_timestamp - 2*aggregate_interval, end_timestamp - aggregate_interval, end_timestamp], \
-                              'unix_epoch', \
+            self.assertEqual(value_tuple[1],
+                             ([end_timestamp - 2*aggregate_interval, end_timestamp - aggregate_interval, end_timestamp],
+                              'unix_epoch',
                               'group_time'))
             self.assertEqual(value_tuple[2], ([aqi_tuples[0][0], aqi_tuples[1][0], aqi_tuples[2][0]], unit, unit_group))
 
 if __name__ == '__main__':
-    #test_suite = unittest.TestSuite()
-    #test_suite.addTest(TestEPAAQICalculate('test_get_aggregate_min_data'))
-    #unittest.TextTestRunner().run(test_suite)
+    # test_suite = unittest.TestSuite()
+    # test_suite.addTest(TestEPAAQICalculate('test_get_aggregate_min_data'))
+    # unittest.TextTestRunner().run(test_suite)
 
     unittest.main(exit=False)

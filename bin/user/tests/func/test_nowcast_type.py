@@ -24,7 +24,7 @@ import utils.database
 # pylint: enable=import-error, wrong-import-position
 
 def random_string(length=32):
-    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)]) # pylint: disable=unused-variable
+    return ''.join([random.choice(string.ascii_letters + string.digits) for n in range(length)])  # pylint: disable=unused-variable
 
 def setup_config(calculated_field, input_field, algorithm, aqi_type):
     config_dict = {
@@ -121,9 +121,9 @@ class TestNowCastGetSeries(unittest.TestCase):
                            1740139200, 1740142800, 1740146400, 1740150000, 1740153600, 1740157200,
                            1740160800, 1740164400, 1740168000, 1740171600, 1740175200, 1740178800,
                            1740182400, 1740186000, 1740189600, 1740193200, 1740196800, 1740200400],
-                          'unix_epoch', 'group_time'))                           
+                          'unix_epoch', 'group_time'))
         self.assertEqual(aqi_vec,
-                         ([9, 8, 7, 8, 7, 7,7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 8],
+                         ([9, 8, 7, 8, 7, 7, 7, 7, 8, 8, 8, 8, 8, 8, 8, 8, 8, 7, 7, 7, 7, 7, 7, 8],
                           None, None))
 
     def test_get_series_aggregation_valid_inputs(self):
@@ -152,8 +152,8 @@ class TestNowCastGetSeries(unittest.TestCase):
                            1740189600, 1740200400],
                           'unix_epoch', 'group_time'))
         self.assertEqual(aqi_vec,
-                        ([8, 8, 8, 8, 8, 8, 7, 8],
-                         None, None))
+                         ([8, 8, 8, 8, 8, 8, 7, 8],
+                          None, None))
 
 class TestNowCastGetAggregate(unittest.TestCase):
     @classmethod
@@ -190,8 +190,8 @@ class TestNowCastGetAggregate(unittest.TestCase):
         self.assertEqual(aggregate_value, (True, 'boolean', 'group_boolean'))
 
 if __name__ == '__main__':
-    #test_suite = unittest.TestSuite()
-    #test_suite.addTest(TestNowCastDevelopment('test_get_series_prototype02'))
-    #unittest.TextTestRunner().run(test_suite)
+    # test_suite = unittest.TestSuite()
+    # test_suite.addTest(TestNowCastDevelopment('test_get_series_prototype02'))
+    # unittest.TextTestRunner().run(test_suite)
 
     unittest.main(exit=False)
