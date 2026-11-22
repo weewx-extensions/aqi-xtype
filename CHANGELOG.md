@@ -1,18 +1,26 @@
-V2.1.0
-Internal:
+# Changelog
+
+## [2.1.0]
+
+### Internal
+
 - Build improvements
 
-V2.0.0
-Breaking change in behavior:
+## [2.0.0]
+
+### Breaking change in behavior
+
 - The ability to configure if the aqi-xtype is added to the beginning or end of the xtype list.
   The default is the beginning of the list.
   Prior to this, it was added to the end.
 
-Fixes:
+### Fixed
+
 - Handle values of 'None' when calculating the NowCast AQI (#7).
 - Fix and improve performance of nowcast algorithm by retrieving data directly from the database.
 
-Enhancements:
+### Enhancements
+
 - Support EPA’s 2024 update to calculating AQI.
 - Supports calculating series and aggregation for the EPA AQI algorithm.
 - Catch more general exceptions.
@@ -21,35 +29,46 @@ Enhancements:
 - Configure log level for the different aqi ‘types’.
 - More logging….
 
-Limitations:
+### Limitations
+
 - Calculating nowcast series data is not supported.
 - Calculating nowcast aggregation (min, max, etc.) is not supported.
 
-Internal:
+### Internal
+
 - Code cleanup (ongoing).
 - Better support for WeeWX v5.
 - Add development tools such as running linting, tests, code coverage, etc.
 - More tests
 - Initial support of Github actions.
 
-V1.1.0
-Enhancements:
+## [1.1.0]
+
+### Enhancements
+
 - Add support for NowCast calculation.
 
-V1.0.3
-Fixes:
+## [1.0.3]
+
+### Fixed
+
 - Add default formatter and label. (Issue #2)
 
-V1.0.2
-Enhancements:
+## [1.0.2]
+
+### Enhancements
+
 - Added the 'not_null' 'aggregate_type'
   This is used by the 'skip_if_empty' ImageGenerator option.
   The 'skip_if_empty' option is used in the Seasons skin.
 - Added $AQIColor, AQIDescription and $version tags.
 
-V1.0.1
-Fixes:
+## [1.0.1]
+
+### Fixed
+
 - Incorrect breakpoint in the calculation of pm 2.5 AQI
 
-V1.0.0
+## [1.0.0]
+
 - Initial Release
