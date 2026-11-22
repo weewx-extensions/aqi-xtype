@@ -49,3 +49,7 @@ Internal:
 - Add development tools such as running linting, tests, code coverage, etc.
 - More tests
 - Initial support of Github actions.
+
+V2.1.0
+Internal:
+- Build improvements
